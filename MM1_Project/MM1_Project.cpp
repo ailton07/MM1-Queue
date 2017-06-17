@@ -19,16 +19,12 @@ using namespace std;
 
 MersenneTwister mt;
 
-
-
-void Log(const char * str) {
-    //cout << str << endl;
-}
+TimedQueue questao03();
+void questao04(TimedQueue queue);
 
 double ExponentialRandom(double seed, double lambda) {
     return -log(seed) / lambda;
 }
-
 
 double valorTeoricoDaMedia(double lambda, double mi) {
 	double ro = lambda / mi;
@@ -39,8 +35,6 @@ double valorTeoricoDaMedia(double lambda, double mi) {
 }
 
 TimedQueue ExecMM1_Queue(TimedQueue queue, int exponent, float interArrivalMean, float serviceRateMean, int servers, bool listQueue) {
-
-	Log("starting");
 
 	ServerList server(servers);
 
@@ -55,9 +49,6 @@ TimedQueue ExecMM1_Queue(TimedQueue queue, int exponent, float interArrivalMean,
 	double interArrivalTime;
 	double serviceTime;
 
-	string s = "creating random interval arrival times for a sampling of " + to_string(sampleSize) + " elements.";
-
-	Log(s.c_str());
 
 	//double arrivalTime = 0;
 	// obtem o ultimo arrivaltime pra utilizar como base
@@ -80,22 +71,11 @@ TimedQueue ExecMM1_Queue(TimedQueue queue, int exponent, float interArrivalMean,
 		queue.AddElement(i, arrivalTime, serviceTime);
 	}
 
-	Log("Running queue on servers.");
-
 	// after we add all process to the queue then we can run the queue on a list of server - in this case 1 (M/M/"1")
 	server.RunQueue(&queue);
 
-	Log("Calculating queue times.");
-
 	// after all process pass in a server we need to get their waiting average. It will be calculate here:
 	queue.ProcessQueue();
-
-	// this is not necessary and you should never set it to true unless you want to wait forever for 10^7.
-	// Writing in console is so expensive compared to just math only.
-	if (listQueue) {
-		Log("Listing queue:");
-		queue.ListQueue();
-	}
 
 	// the we return the processed waiting average time.
 	return queue;
@@ -103,7 +83,6 @@ TimedQueue ExecMM1_Queue(TimedQueue queue, int exponent, float interArrivalMean,
 
 TimedQueue ExecMM1_Queue(int exponent, float interArrivalMean, float serviceRateMean, int servers, bool listQueue) {
 
-	Log("starting");
 
 	TimedQueue queue;
 	ServerList server(servers);
@@ -120,8 +99,6 @@ TimedQueue ExecMM1_Queue(int exponent, float interArrivalMean, float serviceRate
 	double serviceTime;
 
 	string s = "creating random interval arrival times for a sampling of " + to_string(sampleSize) + " elements.";
-
-	Log(s.c_str());
 
 	double arrivalTime = 0;
 
@@ -142,12 +119,8 @@ TimedQueue ExecMM1_Queue(int exponent, float interArrivalMean, float serviceRate
 		queue.AddElement(i, arrivalTime, serviceTime);
 	}
 
-	Log("Running queue on servers.");
-
 	// after we add all process to the queue then we can run the queue on a list of server - in this case 1 (M/M/"1")
 	server.RunQueue(&queue);
-
-	Log("Calculating queue times.");
 
 	// after all process pass in a server we need to get their waiting average. It will be calculate here:
 	queue.ProcessQueue();
@@ -155,7 +128,7 @@ TimedQueue ExecMM1_Queue(int exponent, float interArrivalMean, float serviceRate
 	// this is not necessary and you should never set it to true unless you want to wait forever for 10^7.
 	// Writing in console is so expensive compared to just math only.
 	if (listQueue) {
-		Log("Listing queue:");
+		// Log("Listing queue:");
 		queue.ListQueue();
 	}
 
@@ -163,7 +136,105 @@ TimedQueue ExecMM1_Queue(int exponent, float interArrivalMean, float serviceRate
 	return queue;
 }
 
-void questao03() {
+void printQueue(TimedQueue queue) {
+	for (int i = 0; i < queue.Size(); i++) {
+		printf("%f, ", queue[i].waitTime);
+	}
+	printf("\n\n");
+}
+
+
+int main()
+{
+	// Execucao da Questao 03
+	TimedQueue queue  = questao03();
+	// Execucao da Questao 04
+	questao04(queue);
+
+	system("pause");
+	return 0;
+}
+
+
+void obterInformacoesQueue(TimedQueue queue, int j) {
+	queue.RemoveElements(j);
+
+	// Recalcula Media
+	queue.ProcessQueue();
+	// Media da espera
+	double waitingAverage = queue.WaitingAverage();
+	// Intervalo de confianca
+	long double variacaoIC = queue.IntervaloConfianca();
+	
+	printf("\nobterInformacoesQueue:\n");
+	printf("Media de Espera: %f\n", waitingAverage);
+	printf("VariacaoIC: %f\n", variacaoIC);
+	// Aplicacao do intervalo de confianca na media
+	printf("IC-: %f;\n", waitingAverage - variacaoIC);
+	printf("IC+: %f;\n", waitingAverage + variacaoIC);
+	printf("Numero de elementos da queue final: %f\n", queue.Size());
+}
+
+void questao04DoJobForK(TimedQueue queue, int k) {
+	int n = 0;
+	int j = 0;  // posicao ate encontrar k passagens pela media
+	int contadorTransicoes = 0;
+	double media = 0.0;
+	double referencia = 0;
+
+	while (contadorTransicoes < k) {
+		vector<double> observacoes;
+		n = n + (queue.Size() / 100) + 1;
+		// observacoes.clear();
+		contadorTransicoes = 0;
+
+		// Pega N primeiro elementos
+		for (int i = 0; i < n; i++) {
+			observacoes.push_back(queue[i].waitTime);
+			media = media + queue[i].waitTime;
+			// printf("%f, ", queue[i].waitTime);
+		}
+		media = media / n;
+
+		referencia = observacoes[0];
+
+		for (int i = 1; i < n; i++) {
+			if ((observacoes[i] > media
+				&& referencia < media) ||
+				(observacoes[i] < media
+					&& referencia > media)) {
+				contadorTransicoes++;
+				j = i;
+
+				if (contadorTransicoes == k)
+					break;
+			}
+			referencia = observacoes[i];
+		}
+	}
+	obterInformacoesQueue(queue, j);
+}
+
+void questao04(TimedQueue queue) {
+	TimedQueue auxQueue;
+	// K = 5
+	auxQueue = queue;
+	questao04DoJobForK(auxQueue, 5);
+
+	// K = 7
+	auxQueue = queue;
+	questao04DoJobForK(auxQueue, 7);
+
+	// K = 15
+	auxQueue = queue;
+	questao04DoJobForK(auxQueue, 15);
+
+	// K = 20
+	auxQueue = queue;
+	questao04DoJobForK(auxQueue, 20);
+}
+
+TimedQueue questao03() {
 	TimedQueue queue;
 	bool continuarExecucao = true;
 
@@ -172,8 +243,12 @@ void questao03() {
 	// taxa de servico
 	double mi = 10;
 
-	// Inicia os calculos para o caso inicial de uma fila de 10^3
-	queue = ExecMM1_Queue(3, lambda, mi, 1, false);
+	int queueSize;
+
+	// Inicia os calculos para o caso inicial de uma fila de 10^4 ou 10^5
+	// Evitar usar valores inferiores
+	queue = ExecMM1_Queue(5, lambda, mi, 1, false);
+	queueSize = queue.Size();
 	// Media da espera
 	double waitingAverage = queue.WaitingAverage();
 	// Intervalo de confianca
@@ -201,6 +276,7 @@ void questao03() {
 		// Adiciona 100 elementos na queue e reprocessa
 		printf("\nAdicionando 100 elementos na queue e reprocessando\n");
 		queue = ExecMM1_Queue(queue, 2, 90, 100, 1, false);
+		queueSize = queue.Size();
 
 		waitingAverage = queue.WaitingAverage();
 		variacaoIC = queue.IntervaloConfianca();
@@ -218,24 +294,15 @@ void questao03() {
 			printf("\n\nCondicao de parada\n");
 			break;
 		}
-
 	}
+
+	printf("Numero de elementos da queue final: %d\n", queueSize);
 
 	// obtem o valor teorico esperado da media
 	printf("Valor teorico da media: %f\n", valorTeoricoDaMedia(lambda, mi));
 
-	/*printf("Desvio padrao: %f\n", queue.DesvioPadrao());
-	for (int i = 0; i < queue.Size(); i++) {
-		printf("%f, ", queue[i].waitTime);
-	}*/
-}
+	//printf("Desvio padrao: %f\n", queue.DesvioPadrao());
+	//printQueue(queue);
 
-
-int main()
-{
-	
-	questao03();
-
-	system("pause");
-	return 0;
+	return queue;
 }

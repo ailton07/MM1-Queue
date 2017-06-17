@@ -31,6 +31,7 @@ public:
     TimedQueue();
 
     void AddElement(int id, float arrivalTime, float operationDuration);
+	void RemoveElements(int index);
     void ProcessQueue();
 
 	double DesvioPadrao();
@@ -42,12 +43,14 @@ public:
 
     double Size();
     double WaitingAverage();
+	double VariacaoIC();
     void ListQueue();
 
 private:
     vector<Element> element;
     double waitAvg;
     double totalWaitTime;
+	double variacaoIC;
 };
 
 #endif //QUEUES_TIMEDQUEUE_H

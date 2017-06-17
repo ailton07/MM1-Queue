@@ -89,7 +89,7 @@ long double TimedQueue::IntervaloConfianca() {
 		}
 
 	}
-
+	variacaoIC = variacao;
 	return variacao;
 }
 
@@ -129,6 +129,11 @@ void TimedQueue::AddElement(int id, float arrivalTime, float operationDuration) 
     element.push_back(e);
 }
 
+void TimedQueue::RemoveElements(int index)
+{
+	element.erase(element.begin(), element.begin() + index);
+}
+
 TimedQueue::TimedQueue() {
 }
 
@@ -154,6 +159,10 @@ double TimedQueue::Size() {
 // return the calculated value on ProcessQueue. Which means, if you don't call that function this will return 0;
 double TimedQueue::WaitingAverage() {
     return waitAvg;
+}
+
+double TimedQueue::VariacaoIC() {
+	return variacaoIC;
 }
 
 // list each element with its information. This can take so long for huge lists (i.e. 10^7).
