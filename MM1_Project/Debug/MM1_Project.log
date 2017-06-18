@@ -6,9 +6,9 @@ c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(
 c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(92): warning C4244: 'initializing': conversion from 'std::chrono::system_clock::rep' to 'unsigned int', possible loss of data
 c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(96): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
 c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(119): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(187): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(250): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(251): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(279): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(193): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(259): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(260): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(288): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
   MM1_Project.vcxproj -> C:\Users\ailto\Documents\GitHub\MM1-Queue\MM1-Queue\Debug\MM1_Project.exe
   MM1_Project.vcxproj -> C:\Users\ailto\Documents\GitHub\MM1-Queue\MM1-Queue\Debug\MM1_Project.pdb (Full PDB)

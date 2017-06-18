@@ -20,7 +20,7 @@ using namespace std;
 MersenneTwister mt;
 
 TimedQueue questao03();
-void questao04(TimedQueue queue);
+TimedQueue questao04(TimedQueue queue);
 
 double ExponentialRandom(double seed, double lambda) {
     return -log(seed) / lambda;
@@ -146,9 +146,13 @@ void printQueue(TimedQueue queue) {
 
 int main()
 {
+	printf("************************\n");
+	printf("Execucao da Questao 03\n");
 	// Execucao da Questao 03
 	TimedQueue queue  = questao03();
 	// Execucao da Questao 04
+	printf("\n\n************************\n");
+	printf("Execucao da Questao 04\n");
 	questao04(queue);
 
 	system("pause");
@@ -156,7 +160,7 @@ int main()
 }
 
 
-void obterInformacoesQueue(TimedQueue queue, int j) {
+TimedQueue obterInformacoesQueue(TimedQueue queue, int j) {
 	queue.RemoveElements(j);
 
 	// Recalcula Media
@@ -173,9 +177,11 @@ void obterInformacoesQueue(TimedQueue queue, int j) {
 	printf("IC-: %f;\n", waitingAverage - variacaoIC);
 	printf("IC+: %f;\n", waitingAverage + variacaoIC);
 	printf("Numero de elementos da queue final: %f\n", queue.Size());
+
+	return queue;
 }
 
-void questao04DoJobForK(TimedQueue queue, int k) {
+TimedQueue questao04DoJobForK(TimedQueue queue, int k) {
 	int n = 0;
 	int j = 0;  // posicao ate encontrar k passagens pela media
 	int contadorTransicoes = 0;
@@ -212,10 +218,11 @@ void questao04DoJobForK(TimedQueue queue, int k) {
 			referencia = observacoes[i];
 		}
 	}
-	obterInformacoesQueue(queue, j);
+	// Faz prints e retorna a queue
+	return obterInformacoesQueue(queue, j);
 }
 
-void questao04(TimedQueue queue) {
+TimedQueue questao04(TimedQueue queue) {
 	TimedQueue auxQueue;
 	// K = 5
 	auxQueue = queue;
@@ -231,7 +238,9 @@ void questao04(TimedQueue queue) {
 
 	// K = 20
 	auxQueue = queue;
-	questao04DoJobForK(auxQueue, 20);
+	auxQueue = questao04DoJobForK(auxQueue, 20);
+
+	return auxQueue;
 }
 
 TimedQueue questao03() {
@@ -268,7 +277,7 @@ TimedQueue questao03() {
 	// Checa condicao de parada
 	if (gama <= 0.05) {
 		continuarExecucao = false;
-		printf("\n\nCondicao de parada\n");
+		printf("\nCondicao de parada\n");
 	}
 	// Caso a condicao de parada nao seja alcancada
 	// Repete os passos anteriores
