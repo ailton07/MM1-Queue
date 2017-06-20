@@ -23,6 +23,9 @@ TimedQueue questao03();
 TimedQueue questao04(TimedQueue queue);
 void questao05(TimedQueue queue);
 
+double student_dist(int ndf, double p);
+double normal_dist(double p);
+
 void obterInformacoesQueue(TimedQueue queue);
 
 double ExponentialRandom(double seed, double lambda) {
@@ -209,25 +212,54 @@ bool testeVonNeuman(vector<double> mediasBlocos) {
 		denominador = denominador + pow((R[i] - mediaR), 2);
 	}
 
+	// Se RVN = 2, amostras independentes
+	// https://repositorio.ufrn.br/jspui/bitstream/123456789/20190/1/PatriciaVianaDeLima_DISSERT.pdf
 	// RVN
 	RVN = numerador / denominador;
-
-
-	// https://pdfs.semanticscholar.org/f743/31a740faffdf278b7215918ece58eadddcc0.pdf
-	// http://sisne.org/Disciplinas/Grad/ProbEstat2/aula15.pdf
+	if (RVN > 1.5)
+		return true;
 
 	return false;
 }
 
-void questao05(TimedQueue queue) {
-	// Utilizando 50 %  da queue
-	int N = queue.Size() / 2;
-	// Valor arbitrario de 20% de N
-	int M = N / 5;
-	// N = B * M
-	// B vai ser igual a 5 nesse caso
-	int B = N / M;
+double desvioPadrao(vector<double> mediasBlocos, double waitAvg) {
+	double desvio = 0.0;
+	double aux;
 
+	if (waitAvg > 0.0) {
+
+		for (int i = 0; i < mediasBlocos.size(); ++i) {
+			aux = mediasBlocos[i];
+			desvio = desvio + pow(aux - waitAvg, 2);
+		}
+		desvio = desvio / (mediasBlocos.size() - 1);
+		desvio = sqrt(desvio);
+	}
+
+	return desvio;
+}
+
+long double intervaloConfianca(vector<double> element, double waitAvg, double desvio) {
+	double lvlConfianca = 0.95;
+	long double variacao = 0.0;
+
+	if (waitAvg > 0.0) {
+
+		// obtendo T[n-1; alpha]
+		double alpha = 1 - lvlConfianca;
+		double student = student_dist(element.size() - 1, alpha);
+
+		if ((alpha > 0)
+			&& (student > 0)
+			&& (element.size() > 0)) {
+			variacao = (desvio * student) / sqrt(element.size());
+		}
+
+	}
+	return variacao;
+}
+
+bool batchMeans(TimedQueue queue, int N, int M, int B) {
 	double media = 0.0;
 
 	vector<double> mediasBlocos;
@@ -238,19 +270,65 @@ void questao05(TimedQueue queue) {
 		}
 		media = media / M;
 		mediasBlocos.push_back(media);
+		// printf("media: %f\n", media);
 		media = 0;
 	}
 
+	double mediaBlocos = 0.0;
+	double desvio = 0.0;
+	long double variacaoIC = 0.0;
 
-	// Remover
-	for (int i = 0; i < mediasBlocos.size(); i++) {
-		media = media + mediasBlocos[i];
-		printf("%f\n", mediasBlocos[i]);
+	if (testeVonNeuman(mediasBlocos)) {
+		// Calcula a media dos blocos
+		for (int i = 0; i < mediasBlocos.size(); i++) {
+			mediaBlocos = mediaBlocos + mediasBlocos[i];
+		}
+		mediaBlocos = mediaBlocos / mediasBlocos.size();
+
+		// Calcula do Desvio Padrao
+		desvio = desvioPadrao(mediasBlocos, mediaBlocos);
+
+		variacaoIC = intervaloConfianca(mediasBlocos, mediaBlocos, desvio);
+
+		// Obtem o H, ou 2d
+		long double h = 2 * variacaoIC;
+		// Obtem gama
+		long double gama = h / mediaBlocos;
+
+		// Checa condicao de parada
+		printf("\nGama: %f\n", gama);
+		if (gama <= 0.05) {
+			printf("Media Global: %f\n", mediaBlocos);
+			printf("IC-: %f;\n", mediaBlocos - variacaoIC);
+			printf("IC+: %f;\n", mediaBlocos + variacaoIC);
+			printf("\nCondicao de parada\n");
+			return true;
+		}
 	}
-	media = media / mediasBlocos.size();
-	printf("Media: %f\n", media);
 
-	testeVonNeuman(mediasBlocos);
+	return false;
+}
+
+void questao05(TimedQueue queue) {
+	// Utilizando 50 %  da queue
+	int N = queue.Size() / 1;
+	// Valor arbitrario de 20% de N
+	int M = N / 10;
+	// N = B * M
+	// B vai ser igual a 5 nesse caso
+	int B = N / M;
+
+	for (int i = 16; i > 0; i--) {
+		N = queue.Size() / 1;
+		M = N / (i );
+		B = N / M;
+		printf("i = %d\n", i);
+		if (batchMeans(queue, N, M, B)) {
+			break;
+		}
+	}
+	
+
 
 }
 
@@ -362,7 +440,7 @@ TimedQueue questao03() {
 
 	// Inicia os calculos para o caso inicial de uma fila de 10^4 ou 10^5
 	// Evitar usar valores inferiores
-	queue = ExecMM1_Queue(5, lambda, mi, 1, false);
+	queue = ExecMM1_Queue(6, lambda, mi, 1, false);
 	queueSize = queue.Size();
 	// Media da espera
 	double waitingAverage = queue.WaitingAverage();
@@ -376,9 +454,9 @@ TimedQueue questao03() {
 	printf("IC+: %f;\n", waitingAverage + variacaoIC);
 
 	// Obtem o H, ou 2d
-	double h = 2 * variacaoIC;
+	long double h = 2 * variacaoIC;
 	// Obtem gama
-	double gama = h / waitingAverage;
+	long double gama = h / waitingAverage;
 
 	// Checa condicao de parada
 	if (gama <= 0.05) {

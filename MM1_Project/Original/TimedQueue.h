@@ -10,6 +10,10 @@
 
 using namespace std;
 
+
+double student_dist(int ndf, double p);
+
+
 class Element {
 public:
     int id;
