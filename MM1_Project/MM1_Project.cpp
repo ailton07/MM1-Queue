@@ -21,6 +21,9 @@ MersenneTwister mt;
 
 TimedQueue questao03();
 TimedQueue questao04(TimedQueue queue);
+void questao05(TimedQueue queue);
+
+void obterInformacoesQueue(TimedQueue queue);
 
 double ExponentialRandom(double seed, double lambda) {
     return -log(seed) / lambda;
@@ -153,23 +156,113 @@ int main()
 	// Execucao da Questao 04
 	printf("\n\n************************\n");
 	printf("Execucao da Questao 04\n");
-	questao04(queue);
+	queue = questao04(queue);
+
+
+	printf("\n\n************************\n");
+	printf("Execucao da Questao 05\n");
+	questao05(queue);
+	// obterInformacoesQueue(queue);
 
 	system("pause");
 	return 0;
 }
 
+// *******************************
+// Desenvolvimento para Questao 5
 
-TimedQueue obterInformacoesQueue(TimedQueue queue, int j) {
-	queue.RemoveElements(j);
+bool testeVonNeuman(vector<double> mediasBlocos) {
+	double B = 0.05; // Precisao de 5% ?
+	vector<int> R;
+	int contadorR = 0;
 
-	// Recalcula Media
-	queue.ProcessQueue();
+	double RVN = 0.0;
+
+	for (int i = 0; i < mediasBlocos.size(); i++) {
+		for (int j = 0; j < mediasBlocos.size(); j++) {
+			if (i == j) {
+				continue;
+			}
+			
+			if (mediasBlocos[j] <= mediasBlocos[i]) {
+				contadorR++;
+			}
+		}
+		R.push_back(contadorR);
+		contadorR = 0;
+	}
+	// Media R
+	double mediaR = 0.0;
+	for (int i = 0; i < R.size(); i++) {
+		mediaR = mediaR + R[i];
+	}
+	mediaR = mediaR / R.size();
+
+	// Numerador
+	double numerador = 0.0;
+	for (int i = 0; i < R.size() - 1; i++) {
+		numerador = numerador + pow((R[i] - R[i + 1]), 2);
+	}
+	// Denominador
+	double denominador = 0.0;
+	for (int i = 0; i < R.size(); i++) {
+		denominador = denominador + pow((R[i] - mediaR), 2);
+	}
+
+	// RVN
+	RVN = numerador / denominador;
+
+
+	// https://pdfs.semanticscholar.org/f743/31a740faffdf278b7215918ece58eadddcc0.pdf
+	// http://sisne.org/Disciplinas/Grad/ProbEstat2/aula15.pdf
+
+	return false;
+}
+
+void questao05(TimedQueue queue) {
+	// Utilizando 50 %  da queue
+	int N = queue.Size() / 2;
+	// Valor arbitrario de 20% de N
+	int M = N / 5;
+	// N = B * M
+	// B vai ser igual a 5 nesse caso
+	int B = N / M;
+
+	double media = 0.0;
+
+	vector<double> mediasBlocos;
+
+	for (int i = 0; i < B; i++) {
+		for (int j = 0; j < M; j++) {
+			media = media + queue[i*M + j].waitTime;
+		}
+		media = media / M;
+		mediasBlocos.push_back(media);
+		media = 0;
+	}
+
+
+	// Remover
+	for (int i = 0; i < mediasBlocos.size(); i++) {
+		media = media + mediasBlocos[i];
+		printf("%f\n", mediasBlocos[i]);
+	}
+	media = media / mediasBlocos.size();
+	printf("Media: %f\n", media);
+
+	testeVonNeuman(mediasBlocos);
+
+}
+
+// *******************************
+// Desenvolvimento para Questao 4
+
+void obterInformacoesQueue(TimedQueue queue) {
 	// Media da espera
 	double waitingAverage = queue.WaitingAverage();
 	// Intervalo de confianca
 	long double variacaoIC = queue.IntervaloConfianca();
-	
+
 	printf("\nobterInformacoesQueue:\n");
 	printf("Media de Espera: %f\n", waitingAverage);
 	printf("VariacaoIC: %f\n", variacaoIC);
@@ -177,6 +270,16 @@ TimedQueue obterInformacoesQueue(TimedQueue queue, int j) {
 	printf("IC-: %f;\n", waitingAverage - variacaoIC);
 	printf("IC+: %f;\n", waitingAverage + variacaoIC);
 	printf("Numero de elementos da queue final: %f\n", queue.Size());
+}
+
+TimedQueue podaQueueEObtemInformacoes(TimedQueue queue, int j) {
+	// Remove os J primeiros elementos
+	queue.RemoveElements(j);
+
+	// Recalcula Media
+	queue.ProcessQueue();
+
+	obterInformacoesQueue(queue);
 
 	return queue;
 }
@@ -219,7 +322,7 @@ TimedQueue questao04DoJobForK(TimedQueue queue, int k) {
 		}
 	}
 	// Faz prints e retorna a queue
-	return obterInformacoesQueue(queue, j);
+	return podaQueueEObtemInformacoes(queue, j);
 }
 
 TimedQueue questao04(TimedQueue queue) {
@@ -242,6 +345,9 @@ TimedQueue questao04(TimedQueue queue) {
 
 	return auxQueue;
 }
+
+// *******************************
+// Desenvolvimento para Questao 3
 
 TimedQueue questao03() {
 	TimedQueue queue;
