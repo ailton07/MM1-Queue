@@ -13,16 +13,16 @@ c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(
 c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(363): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
 c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(373): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
 c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(425): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(494): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(495): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(525): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(574): warning C4244: 'initializing': conversion from 'std::chrono::system_clock::rep' to 'unsigned int', possible loss of data
-c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(578): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(586): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(602): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(623): warning C4244: 'initializing': conversion from 'std::chrono::system_clock::rep' to 'unsigned int', possible loss of data
-c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(627): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(650): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(671): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(495): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(496): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(526): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(575): warning C4244: 'initializing': conversion from 'std::chrono::system_clock::rep' to 'unsigned int', possible loss of data
+c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(579): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(587): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(603): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(624): warning C4244: 'initializing': conversion from 'std::chrono::system_clock::rep' to 'unsigned int', possible loss of data
+c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(628): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(651): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\ailto\documents\github\mm1-queue\mm1-queue\mm1_project\mm1_project.cpp(672): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
   MM1_Project.vcxproj -> C:\Users\ailto\Documents\GitHub\MM1-Queue\MM1-Queue\Debug\MM1_Project.exe
   MM1_Project.vcxproj -> C:\Users\ailto\Documents\GitHub\MM1-Queue\MM1-Queue\Debug\MM1_Project.pdb (Full PDB)

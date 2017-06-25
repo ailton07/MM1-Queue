@@ -207,7 +207,7 @@ void questao06(TimedQueue queue) {
 
 			if (sts(queue, N, M, B)) {
 				printf("M = N / %d\tN = queue.Size() / %d\n\n", i, j);
-				return;
+				//return;
 			}
 		}
 
@@ -483,7 +483,8 @@ TimedQueue questao03() {
 	bool continuarExecucao = true;
 
 	// taxa de entrada
-	double lambda = 9;
+	// double lambda = 8.5;
+	double lambda = 9.5;
 	// taxa de servico
 	double mi = 10;
 
