@@ -36,6 +36,19 @@ void obterInformacoesQueue(TimedQueue queue);
 
 vector<double> SWcoefficients(double B);
 
+double lambda = 9;
+int mi = 10;
+
+// Adiciona 1000 elementos na queue e reprocessa
+TimedQueue aumentaQueue(TimedQueue original) {
+	TimedQueue queue;
+
+	//printf("\nAdicionando 100 elementos na queue e reprocessando\n");
+	queue = ExecMM1_Queue(original, 3, lambda, mi, 1, false);
+	//printf("Tamanho atual da Queue: %f\n", queue.Size());
+	return queue;
+}
+
 void printQueue(TimedQueue queue) {
 	for (int i = 0; i < queue.Size(); i++) {
 		printf("%f, ", queue[i].waitTime);
@@ -48,22 +61,21 @@ int main()
 {
 	printf("************************\n");
 	printf("Execucao da Questao 03\n");
-	// Execucao da Questao 03
-	TimedQueue queue  = questao03();
-	// Execucao da Questao 04
+	TimedQueue queue = questao03();
+
+
 	printf("\n\n************************\n");
 	printf("Execucao da Questao 04\n");
 	queue = questao04(queue);
 
 
-	printf("\n\n************************\n");
+	/*printf("\n\n************************\n");
 	printf("Execucao da Questao 05\n");
-	questao05(queue);
+	questao05(queue);*/
 
 	printf("\n\n************************\n");
 	printf("Execucao da Questao 06\n");
 	questao06(queue);
-	// obterInformacoesQueue(queue);
 
 	system("pause");
 	return 0;
@@ -83,7 +95,7 @@ bool shapiroWilkTeste(vector<double> aVector) {
 
 	// Ordenacao do vetor
 	sort(aVector.begin(), aVector.end());
-	
+
 	// Calculo da media
 	double media = 0.0;
 	for (int i = 0; i < aVector.size(); i++) {
@@ -99,40 +111,41 @@ bool shapiroWilkTeste(vector<double> aVector) {
 		n = aVector.size() - 1;
 	}
 	else {
-		n = aVector.size() ;
+		n = aVector.size();
 	}
 
 	double b = 0.0;
+	// vector <double> a = SWcoefficients(aVector.size());
+	// Usar o novo N
 	vector <double> a = SWcoefficients(aVector.size());
 
 	for (int i = 1; i <= n / 2; i++) {
-		b = b + (aVector[n - i -1] - aVector[i]) * a[i - 1];
+		b = b + (aVector[n - i - 1] - aVector[i]) * a[i - 1];
 	}
 
 	long double W = pow(b, 2) / pow(desvioPadraoValor, 2);
 
-	if ((W < wPoint1) || (W > wPoint2)) {
+	// if ((W < wPoint1) || (W > wPoint2)) {
+	if (W < wPoint1) {
 		// Pode-se considerar que os Ai não estão normalmente distribuidos
 		return false;
 	}
 	else {
 		return true;
 	}
-
-	return false;
 }
 
 bool sts(TimedQueue queue, int N, int M, int B) {
 	vector<double> a;
 	for (int i = 0; i < B; i++) {
 		double aAux = 0.0;
-		for (int j = 1; j <= M; j++ ) {
-		// for (int j = 0; j < M; j++) {
-			aAux = aAux + ( ( (M + 1) / 2)  - j) * (queue[(i)*(M) + j - 1].waitTime);
+		for (int j = 1; j <= M; j++) {
+			// for (int j = 0; j < M; j++) {
+			aAux = aAux + (((M + 1) / 2) - j) * (queue[(i)*(M)+j - 1].waitTime);
 		}
 		a.push_back(aAux);
 	}
-	
+
 	if (shapiroWilkTeste(a)) {
 		// Inicio da fase de estimacao
 		vector<double> mediasBlocos;
@@ -144,7 +157,7 @@ bool sts(TimedQueue queue, int N, int M, int B) {
 			media = media / M;
 			mediasBlocos.push_back(media);
 		}
-		
+
 		double mediaGlobal = 0.0;
 		for (int i = 0; i < B; i++) {
 			mediaGlobal = mediaGlobal + mediasBlocos[i];
@@ -157,24 +170,25 @@ bool sts(TimedQueue queue, int N, int M, int B) {
 		}
 
 		double Vt = 0.0;
-		Vt = (12 / (pow(M, 3) - M)) * somaAis;
+		Vt = (12 / ((pow(M, 3) - M)*1)) * somaAis;
 
-		double variacaoIC = 0.0;
+		long double variacaoIC = 0.0;
 		double lvlConfianca = 0.95;
 
 		double alpha = 1 - lvlConfianca;
 		double student = student_dist(2 * B - 1, alpha);
 
-		variacaoIC = student * sqrt(Vt/N);
-		
+		variacaoIC = student * sqrt(Vt / N);
+
 		long double gama = variacaoIC / mediaGlobal;
 
 		// Checa condicao de parada
-		printf("\nGama: %f\n", gama);
+		// printf("\nGama: %f\n", gama);
 		if (gama <= 0.05) {
 			printf("Media Global: %f\n", mediaGlobal);
 			printf("IC-: %f;\n", mediaGlobal - variacaoIC);
 			printf("IC+: %f;\n", mediaGlobal + variacaoIC);
+			printf("Precisao Relativa: %f;\n", gama);
 			printf("\nCondicao de parada\n");
 			return true;
 		}
@@ -188,32 +202,24 @@ bool sts(TimedQueue queue, int N, int M, int B) {
 
 
 void questao06(TimedQueue queue) {
-	// Utilizando 25 %  da queue
-	int N = queue.Size() / 4;
-	// Valor arbitrario de 20% de N
-	int M = N / 10;
-	// N = B * M
-	int B = N / M;
+	int N = queue.Size();
+	int B = 4;
+	int M = N / B;
 
-	// sts(queue, N, M, B);
+	bool continuarExecucao = true;
 
-	for (int i = 16; i > 0; i--) {
-
-		for (int j = 4; j > 0; j--) {
-
-			N = queue.Size() / j;
-			M = N / (i);
-			B = N / M;
-
-			if (sts(queue, N, M, B)) {
-				printf("M = N / %d\tN = queue.Size() / %d\n\n", i, j);
-				//return;
-			}
+	// Caso a condicao de parada nao seja alcancada
+	// Repete os passos anteriores
+	while (continuarExecucao) {
+		N = queue.Size();
+		B = 4;
+		M = N / B;
+		if (sts(queue, N, M, B)) {
+			printf("N = %d\tM = %d\tB = %d\n\n", N, M, B);
+			return;
 		}
-
+		queue = aumentaQueue(queue);
 	}
-
-
 }
 
 
@@ -222,7 +228,7 @@ void questao06(TimedQueue queue) {
 // Desenvolvimento para Questao 5
 
 bool testeVonNeuman(vector<double> mediasBlocos) {
-	double B = 0.05; // Precisao de 5% ?
+	double B = 0.05;
 	vector<int> R;
 	int contadorR = 0;
 
@@ -233,7 +239,7 @@ bool testeVonNeuman(vector<double> mediasBlocos) {
 			if (i == j) {
 				continue;
 			}
-			
+
 			if (mediasBlocos[j] <= mediasBlocos[i]) {
 				contadorR++;
 			}
@@ -263,7 +269,9 @@ bool testeVonNeuman(vector<double> mediasBlocos) {
 	// https://repositorio.ufrn.br/jspui/bitstream/123456789/20190/1/PatriciaVianaDeLima_DISSERT.pdf
 	// RVN
 	RVN = numerador / denominador;
-	if (RVN > 1.5)
+	// Aproximadamente o valor 1.4 da tabela de pontos críticos do teste de von Neuman do slide
+	// if (RVN > 1.5)
+	if (RVN > 1.44)
 		return true;
 
 	return false;
@@ -317,7 +325,6 @@ bool batchMeans(TimedQueue queue, int N, int M, int B) {
 		}
 		media = media / M;
 		mediasBlocos.push_back(media);
-		// printf("media: %f\n", media);
 		media = 0;
 	}
 
@@ -337,19 +344,16 @@ bool batchMeans(TimedQueue queue, int N, int M, int B) {
 
 		variacaoIC = intervaloConfianca(mediasBlocos, mediaBlocos, desvio);
 
-		// Obtem o H, ou 2d
-		// long double h = 2 * variacaoIC;
-		// Na verdade o correto e que H = variacaoIC
 		long double h = variacaoIC;
 		// Obtem gama
 		long double gama = h / mediaBlocos;
 
 		// Checa condicao de parada
-		printf("\nGama: %f\n", gama);
 		if (gama <= 0.05) {
 			printf("Media Global: %f\n", mediaBlocos);
 			printf("IC-: %f;\n", mediaBlocos - variacaoIC);
 			printf("IC+: %f;\n", mediaBlocos + variacaoIC);
+			printf("Precisao Relativa: %f;\n", gama);
 			printf("\nCondicao de parada\n");
 			return true;
 		}
@@ -360,27 +364,27 @@ bool batchMeans(TimedQueue queue, int N, int M, int B) {
 
 void questao05(TimedQueue queue) {
 	// Utilizando 25 %  da queue
-	int N = queue.Size() / 4;
-	// Valor arbitrario de 20% de N
-	int M = N / 10;
-	// N = B * M
-	int B = N / M;
-	
-	for (int i = 16; i > 0; i--) {
-		
-		for (int j = 4; j > 0; j--) {
+	int N = queue.Size();
+	int B = 4;
+	int M = N / B;
 
-			N = queue.Size() / j;
-			M = N / (i);
-			B = N / M;
+	bool continuarExecucao = true;
 
-			if (batchMeans(queue, N, M, B)) {
-				printf("M = N / %d\tN = queue.Size() / %d\n\n", i, j);
-				return;
-			}
+	// Caso a condicao de parada nao seja alcancada
+	// Repete os passos anteriores
+	while (continuarExecucao) {
+
+		N = queue.Size();
+		B = 4;
+		M = N / B;
+
+		if (batchMeans(queue, N, M, B)) {
+			printf("N = %d\tM = %d\tB = %d\n\n", N, M, B);
+			return;
 		}
-		
+		queue = aumentaQueue(queue);
 	}
+
 }
 
 // *******************************
@@ -414,7 +418,7 @@ TimedQueue podaQueueEObtemInformacoes(TimedQueue queue, int j) {
 }
 
 TimedQueue questao04DoJobForK(TimedQueue queue, int k) {
-	int n = 0;
+	double n = 0;
 	int j = 0;  // posicao ate encontrar k passagens pela media
 	int contadorTransicoes = 0;
 	double media = 0.0;
@@ -423,7 +427,10 @@ TimedQueue questao04DoJobForK(TimedQueue queue, int k) {
 	while (contadorTransicoes < k) {
 		vector<double> observacoes;
 		n = n + (queue.Size() / 100) + 1;
-		// observacoes.clear();
+		// Incrementa tamanho da Queue
+		if (n >= queue.Size())
+			queue = aumentaQueue(queue);
+
 		contadorTransicoes = 0;
 
 		// Pega N primeiro elementos
@@ -481,18 +488,10 @@ TimedQueue questao04(TimedQueue queue) {
 TimedQueue questao03() {
 	TimedQueue queue;
 	bool continuarExecucao = true;
-
-	// taxa de entrada
-	// double lambda = 8.5;
-	double lambda = 9.5;
-	// taxa de servico
-	double mi = 10;
-
 	int queueSize;
 
-	// Inicia os calculos para o caso inicial de uma fila de 10^4 ou 10^5
-	// Evitar usar valores inferiores
-	queue = ExecMM1_Queue(6, lambda, mi, 1, false);
+	// Inicia os calculos para o caso inicial de uma fila
+	queue = ExecMM1_Queue(2, lambda, mi, 1, false);
 	queueSize = queue.Size();
 	// Media da espera
 	double waitingAverage = queue.WaitingAverage();
@@ -503,26 +502,22 @@ TimedQueue questao03() {
 	printf("VariacaoIC: %f\n", variacaoIC);
 	// Aplicacao do intervalo de confianca na media
 	printf("IC-: %f;\n", waitingAverage - variacaoIC);
-	printf("IC+: %f;\n", waitingAverage + variacaoIC);
+	printf("IC+: %f;\n\n", waitingAverage + variacaoIC);
 
-	// Obtem o H, ou 2d
-	// long double h = 2 * variacaoIC;
-	// Na verdade o correto e que H = variacaoIC
 	long double h = variacaoIC;
 	// Obtem gama
 	long double gama = h / waitingAverage;
 
 	// Checa condicao de parada
 	if (gama <= 0.05) {
+		printf("Precisao Relativa: %f;\n\n", gama);
 		continuarExecucao = false;
 		printf("\nCondicao de parada\n");
 	}
 	// Caso a condicao de parada nao seja alcancada
 	// Repete os passos anteriores
 	while (continuarExecucao) {
-		// Adiciona 100 elementos na queue e reprocessa
-		printf("\nAdicionando 100 elementos na queue e reprocessando\n");
-		queue = ExecMM1_Queue(queue, 2, 90, 100, 1, false);
+		queue = aumentaQueue(queue);
 		queueSize = queue.Size();
 
 		waitingAverage = queue.WaitingAverage();
@@ -532,11 +527,12 @@ TimedQueue questao03() {
 		printf("VariacaoIC: %f\n", variacaoIC);
 
 		printf("IC-: %f;\n", waitingAverage - variacaoIC);
-		printf("IC+: %f;\n", waitingAverage + variacaoIC);
+		printf("IC+: %f;\n\n", waitingAverage + variacaoIC);
 
-		h = 2 * variacaoIC;
+		h = variacaoIC;
 		gama = h / waitingAverage;
 		if (gama <= 0.05) {
+			printf("Precisao Relativa: %f;\n\n", gama);
 			continuarExecucao = false;
 			printf("\n\nCondicao de parada\n");
 			break;
@@ -581,6 +577,7 @@ TimedQueue ExecMM1_Queue(TimedQueue queue, int exponent, float interArrivalMean,
 	double interArrivalTime;
 	double serviceTime;
 
+	double antigoTamanho = queue.Size();
 
 	//double arrivalTime = 0;
 	// obtem o ultimo arrivaltime pra utilizar como base
@@ -600,7 +597,7 @@ TimedQueue ExecMM1_Queue(TimedQueue queue, int exponent, float interArrivalMean,
 																// if next interval = 0.5 -> arriving[1] = 1+0.5 = 1.5.
 																// if next = .75 arr[2] = 1 + 0.5 + .75 = 2.25....
 		arrivalTime += interArrivalTime;
-		queue.AddElement(i, arrivalTime, serviceTime);
+		queue.AddElement(i + antigoTamanho, arrivalTime, serviceTime);
 	}
 
 	// after we add all process to the queue then we can run the queue on a list of server - in this case 1 (M/M/"1")
@@ -669,7 +666,7 @@ TimedQueue ExecMM1_Queue(int exponent, float interArrivalMean, float serviceRate
 }
 
 vector<double> SWcoefficients(double B) {
-	int b = (B / 2) - 1 ;
+	int b = (B / 2) - 1;
 	vector<double> a;
 	// GAMBIARRA
 	for (int i = 0; i < b + 1; i++)
